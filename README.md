@@ -42,6 +42,7 @@ python3 42cleaner.py
 
 > [!NOTE]
 > If the used space in your 'home' is under 70%, the tool doesn't do any operation.
+>
 > Otherwise, the tool performs the needed operations to free space.
 
 # License
