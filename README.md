@@ -2,6 +2,8 @@
 
 Python script to clean temp files and older versions from snap in 42school.
 
+<img src="assets/run.png" alt="Script running" align="center" />
+
 # Why?
 Due to the limit of 5 GB and wanting to give a solution to the problem with
 the snap package manager that is not removing properly old versions cache,
