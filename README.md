@@ -1,7 +1,8 @@
 # 42cleaner
 
 Python script to clean temp files and older versions from Snap.
-To be used at 42school.
+
+Tested on **42 Málaga** school running **Ubuntu**. NOT for macOS.
 
 <img src="assets/run.png" alt="Script running" align="center" />
 
