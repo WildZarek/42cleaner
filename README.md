@@ -1,13 +1,15 @@
 # 42cleaner
 
-Python script to clean temp files and older versions from snap in 42school.
+Python script to clean temp files and older versions from Snap.
+To be used at 42school.
 
 <img src="assets/run.png" alt="Script running" align="center" />
 
 # Why?
-Due to the limit of 5 GB and wanting to give a solution to the problem with
-the snap package manager that is not removing properly old versions cache,
-this tool has born to solve these problems.
+
+Due to the limit of 5 GB size for 'home' directory and looking to provide a solution
+for the problem with the Snap package manager that is not removing properly
+old versions cache, this tool has born to solve that problem.
 
 # Trash files
 
@@ -20,13 +22,13 @@ This tool removes the following files:
 
 # How to use
 
-Clone this repository by using de following command:
+Clone this repository by using the following command:
 
 ```bash
 git clone https://github.com/WildZarek/42cleaner.git
 ```
 
-Then, change to the new donwloaded folder:
+Then, change to the new downloaded folder:
 
 ```bash
 cd 42cleaner
