@@ -11,7 +11,7 @@ this tool has born to solve these problems.
 
 # How to use
 
-Download a clone of this repository by using de following command:
+Clone this repository by using de following command:
 
 ```bash
 git clone https://github.com/WildZarek/42cleaner.git
