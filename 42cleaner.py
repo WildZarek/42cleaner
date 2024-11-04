@@ -65,7 +65,7 @@ def need_space(usr: str) -> bool:
     else:
         return False
 
-def clear_snap(usr: str) -> None:
+def clear_snap(usr: str) -> int:
     files_deleted = 0
     packages = glob(f"/home/{usr}/snap/*")
     print(f"[{Blue('i')}] Found {len(packages)} snap packages.")
