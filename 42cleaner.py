@@ -69,7 +69,7 @@ def need_space(usr: str) -> bool:
     # print(f"Used: {round(home.used / (2**30), 2)} GiB")
     # print(f"Free: {round(home.free / (2**30), 2)} GiB")
     # print(f"Percentage: {round(home.percent)}%")
-    if round(home.percent) > 70:
+    if round(home.percent) > 30:
         return True
     else:
         return False
@@ -77,7 +77,7 @@ def need_space(usr: str) -> bool:
 def clear_snap(usr: str) -> int:
     files_deleted = 0
     packages = glob(f"/home/{usr}/snap/*")
-    print(f"[{Blue('i')}] Found {len(packages)} snap packages.")
+    print(f"[{Blue('i')}] Found {Cyan(str(len(packages)))} snap packages.\n")
     for pkg in packages:
         versions = os.listdir(pkg)
         versions.remove("common")
@@ -127,8 +127,8 @@ def clean() -> None:
                 sleep(2)
                 # The total files deleted is not accurate because some files (inside folders) are not counted.
                 # But it's enough to show the user that the script is working. So, 1 folder = 1 file (in some cases).
-                print(f"[{Red('-')}] Deleted {Yellow(str(total_files))} trash files...")
-                print(f"[{Blue('i')}] Disk usage after clean: {show_space(usr)}")
+                print(f"[{Red('-')}] Deleted {Yellow(str(total_files))} trash files.")
+                print(f"[{Blue('i')}] Disk usage after clean: {show_space(usr)}\n")
     else:
         print(f"[{Blue('i')}] No need to clean. You have enough space: {show_space(usr)}")
         return
