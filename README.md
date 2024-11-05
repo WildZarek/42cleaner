@@ -1,6 +1,6 @@
 # 42cleaner
 
-Python script to clean temp files and older versions from Snap.
+Python script to clean temp/cache files and older versions from Snap.
 
 Tested on **42 Málaga** school running **Ubuntu**. NOT for macOS.
 
@@ -18,6 +18,8 @@ This tool removes the following files:
 
 - Empties recycle bin (Trash).
 - All .zcompdump files (A cache file used by compinit).
+- All cache files (.cache folder at $HOME)
+- All cache files from vscode (.config/Code/Cache and .config/Code/CachedData)
 - All temp files created by Francinette.
 - All older versions from installed Snap packages.
 

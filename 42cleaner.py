@@ -1,7 +1,9 @@
-# Cleaner script for 42 school. It will remove all the trash files from our home directory.
-#
+#!/usr/bin/env python3
+
+# Cleaner script for 42 students. It will remove all the trash files from our home directory.
+# -----
 # Author: WildZarek
-# 42login : dsarmien
+# 42login: dsarmien
 
 import os
 import psutil
@@ -38,7 +40,7 @@ def print_banner() -> None:
  /_//____/\__/_/\__/\_,_/_//_/\__/_/   
 \033[91m                       by WildZarek  
 
-\033[94m42cleaner\033[96m | Cleaner script for 42 school.\033[97m
+\033[94m42cleaner\033[96m | Cleaner script for 42 students.\033[97m
 
 >> If you liked this tool, give it a \033[93m'★ Star'\033[97m at the repository. Thanks!
 >> \033[34mhttps://github.com/WildZarek/42cleaner\033[97m
@@ -52,6 +54,13 @@ def check_command(command: str) -> str:
 def exec_command(command: str) -> str:
     cmd = subprocess.run([command], stdout=subprocess.PIPE)
     return cmd.stdout.decode('utf-8').strip()
+
+def show_space(usr: str) -> str:
+    home = psutil.disk_usage(f"/home/{usr}/")
+    used_space = round(home.percent)
+    free_space = 100 - used_space
+    msg_space = f"{Red(str(used_space))}{Red('% used')} | {Green(str(free_space))}{Green('% free')}"
+    return msg_space
 
 def need_space(usr: str) -> bool:
     home = psutil.disk_usage(f"/home/{usr}/")
@@ -91,29 +100,37 @@ def clean() -> None:
             print(f"{Red('Error')}: {Cyan('rm')} binary not found.")
             return
         else:
-            # 42 Cache files
-            files_zcompdump = glob(f"/home/{usr}/.zcompdump*")
             # Trash files
             files_trash = glob(f"/home/{usr}/.local/share/Trash/*")
+            # Cache files
+            files_zcompdump = glob(f"/home/{usr}/.zcompdump*")
+            files_cache = glob(f"/home/{usr}/.cache/*")
+            files_vscode_cache = glob(f"/home/{usr}/.config/Code/Cache/*")
+            files_vscode_cached_data = glob(f"/home/{usr}/.config/Code/CachedData/*")
             # Francinette files
             files_francinette = glob(f"/home/{usr}/francinette/temp/*")
             # Snap packages
             files_snap = clear_snap(usr)
             
-            total_files = len(files_zcompdump) + len(files_trash) + len(files_francinette) + files_snap
+            total_files = len(files_zcompdump) + len(files_cache) + len(files_vscode_cache) \
+                          + len(files_vscode_cached_data) + len(files_trash) \
+                          + len(files_francinette) + files_snap
             if total_files == 0:
                 print(f"[{Blue('i')}] No trash files found.")
                 return
             else:
-                clear_files = files_zcompdump + files_trash + files_francinette
+                clear_files = files_zcompdump + files_cache + files_vscode_cache \
+                            + files_vscode_cached_data + files_trash + files_francinette
                 print(f"[{Yellow('!')}] Cleaning trash files...")
                 for f in clear_files:
                     os.system(f"{rm_bin} -rf {f}")
                 sleep(2)
-                print(f"[{Blue('i')}] Deleted {Green(str(total_files))} trash files...")
+                # The total files deleted is not accurate because some files (inside folders) are not counted.
+                # But it's enough to show the user that the script is working. So, 1 folder = 1 file (in some cases).
+                print(f"[{Red('-')}] Deleted {Yellow(str(total_files))} trash files...")
+                print(f"[{Blue('i')}] Disk usage after clean: {show_space(usr)}")
     else:
-        home = psutil.disk_usage(f"/home/{usr}/")
-        print(f"[{Blue('i')}] No need to clean. You have enough space ({Green(str(round(home.percent)))}{Green('% used')}).")
+        print(f"[{Blue('i')}] No need to clean. You have enough space: {show_space(usr)}")
         return
 
 if __name__ == "__main__":
