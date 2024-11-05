@@ -69,7 +69,7 @@ def need_space(usr: str) -> bool:
     # print(f"Used: {round(home.used / (2**30), 2)} GiB")
     # print(f"Free: {round(home.free / (2**30), 2)} GiB")
     # print(f"Percentage: {round(home.percent)}%")
-    if round(home.percent) > 30:
+    if round(home.percent) > 70:
         return True
     else:
         return False
