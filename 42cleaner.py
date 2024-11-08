@@ -32,7 +32,7 @@ def Cyan(txt: str) -> str:
 def White(txt: str) -> str:
     return f"\033[97m{txt}\033[97m"
 
-def print_banner() -> None:
+def show_banner() -> None:
     banner = """\033[93m
   ____ ___      __                     
  / / /|_  |____/ /__ ___ ____  ___ ____
@@ -45,6 +45,7 @@ def print_banner() -> None:
 >> If you liked this tool, give it a \033[93m'★ Star'\033[97m at the repository. Thanks!
 >> \033[34mhttps://github.com/WildZarek/42cleaner\033[97m
 """
+    os.system("clear")
     print(banner)
 
 def check_command(command: str) -> str:
@@ -69,7 +70,7 @@ def need_space(usr: str) -> bool:
     # print(f"Used: {round(home.used / (2**30), 2)} GiB")
     # print(f"Free: {round(home.free / (2**30), 2)} GiB")
     # print(f"Percentage: {round(home.percent)}%")
-    if round(home.percent) > 70:
+    if round(home.percent) > 60:
         return True
     else:
         return False
@@ -79,6 +80,22 @@ def clear_snap(usr: str) -> int:
     packages = glob(f"/home/{usr}/snap/*")
     print(f"[{Blue('i')}] Found {Cyan(str(len(packages)))} snap packages.\n")
     for pkg in packages:
+        # Firefox's cleaning subroutine
+        if pkg.split('/')[-1] == "firefox":
+            firefox_cache = glob(f"{pkg}/common/.cache/*")
+            files_deleted += len(firefox_cache)
+            os.system(f"rm -rf {pkg}/common/.cache/*")
+        # Slack's cleaning subroutine
+        if pkg.split('/')[-1] == "slack":
+            slack_cache = glob(f"{pkg}/common/.cache/*")
+            files_deleted += len(slack_cache)
+            os.system(f"rm -rf {pkg}/common/.cache/*")
+            slack_versions = os.listdir(pkg)
+            slack_versions.remove("common")
+            slack_versions.remove("current")
+            slack_latest_cache = glob(f"{pkg}/{slack_versions[0]}/.config/Slack/Cache/Cache_Data/*")
+            files_deleted += len(slack_latest_cache)
+            os.system(f"rm -rf {pkg}/{slack_versions[0]}/.config/Slack/Cache/Cache_Data/*")
         versions = os.listdir(pkg)
         versions.remove("common")
         versions.remove("current")
@@ -109,7 +126,7 @@ def clean() -> None:
             files_vscode_cached_data = glob(f"/home/{usr}/.config/Code/CachedData/*")
             # Francinette files
             files_francinette = glob(f"/home/{usr}/francinette/temp/*")
-            # Snap packages
+            # Snap packages (revisions)
             files_snap = clear_snap(usr)
             
             total_files = len(files_zcompdump) + len(files_cache) + len(files_vscode_cache) \
@@ -130,10 +147,9 @@ def clean() -> None:
                 print(f"[{Red('-')}] Deleted {Yellow(str(total_files))} trash files.")
                 print(f"[{Blue('i')}] Disk usage after clean: {show_space(usr)}\n")
     else:
-        print(f"[{Blue('i')}] No need to clean. You have enough space: {show_space(usr)}")
+        print(f"[{Blue('i')}] No need to clean. You have enough space: {show_space(usr)}\n")
         return
 
 if __name__ == "__main__":
-    os.system("clear")
-    print_banner()
+    show_banner()
     clean()
