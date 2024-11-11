@@ -34,7 +34,7 @@ This tool removes the following files:
 The script allows you to choose from different time intervals so that the task runs automatically in the background.
 
 - **Silent Mode**: This mode is intended to run the script in the background, without any prompts.
-- **Verbose Mode**: This mode is intended to run the script without the flag --silent and for printing additional information.
+- **Verbose Mode**: This mode is intended to run the script without the flag **--silent** and for printing additional information.
 
 # How to use
 
