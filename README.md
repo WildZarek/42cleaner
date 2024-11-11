@@ -27,7 +27,22 @@ This tool removes the following files:
 - All temp files created by Francinette. (~/francinette/temp)
 - Older versions (revisions) from installed Snap packages.
 
+# Scheduled tasks and silent mode:
+
+- The script allows you to select from different time intervals so that the task runs automatically in the background.
+- Silent Mode: this mode is added to run the scheduled task or execute the task directly without prompts.
+
 # How to use
+
+```bash
+usage: 42cleaner.py [-h] [-s]
+
+Cleaner script for 42 students.
+
+options:
+  -h, --help    show this help message and exit
+  -s, --silent  run the script in silent mode without prompts
+```
 
 Clone this repository by using the following command:
 
@@ -51,6 +66,10 @@ python3 42cleaner.py
 > If the used space in your 'home' is under 60%, the tool doesn't do any operation.
 >
 > Otherwise, the tool performs the needed operations to free space.
+
+# Acknowledgments
+
+Thanks to [@4ndymcfly](https://github.com/4ndymcfly) for his contributions.
 
 # License
 
