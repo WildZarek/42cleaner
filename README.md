@@ -29,7 +29,7 @@ This tool removes the following files:
 - All temp files created by Francinette. (~/francinette/temp)
 - Older versions (revisions) from installed Snap packages.
 
-# Scheduled tasks and modes:
+# Scheduled tasks and modes
 
 The script allows you to choose from different time intervals so that the task runs automatically in the background.
 
