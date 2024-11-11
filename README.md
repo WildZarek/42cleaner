@@ -30,12 +30,12 @@ This tool removes the following files:
 # Scheduled tasks and modes:
 
 - The script allows you to select from different time intervals so that the task runs automatically in the background.
-- Silent Mode: this mode is added to run the scheduled task or execute the task directly without prompts.
-- Verbose Mode: this mode is intended to run the script without the flag --silent and for printing additional information.
+- **Silent Mode**: This mode is intended to run the scheduled task or execute the task directly without prompts.
+- **Verbose Mode**: This mode is intended to run the script without the flag --silent and for printing additional information.
 
 # How to use
 
-```bash
+```
 usage: 42cleaner.py [-h] [-s]
 
 Cleaner script for 42 students.
