@@ -5,35 +5,34 @@
 # Author: WildZarek
 # 42login: dsarmien
 
+import argparse
 import os
 import psutil
 import subprocess
 from glob import glob
 from time import sleep
 
-def Red(txt: str) -> None:
-    return f"\033[91m{txt}\033[97m"
+# Uncomment the following lines to print disk usage or use 'df -h' command on a terminal:
+# print(f"Total: {round(home.total / (2**30), 2)} GiB")
+# print(f"Used: {round(home.used / (2**30), 2)} GiB")
+# print(f"Free: {round(home.free / (2**30), 2)} GiB")
+# print(f"Percentage: {round(home.percent)}%")
 
-def Green(txt: str) -> None:
-    return f"\033[92m{txt}\033[97m"
-
-def Yellow(txt: str) -> None:
-    return f"\033[93m{txt}\033[97m"
-
-def Blue(txt: str) -> str:
-    return f"\033[94m{txt}\033[97m"
-
-def Purple(txt: str) -> str:
-    return f"\033[95m{txt}\033[97m"
-
-def Cyan(txt: str) -> str:
-    return f"\033[96m{txt}\033[97m"
-
-def White(txt: str) -> str:
-    return f"\033[97m{txt}\033[97m"
+def set_color(txt: str, color_name: str) -> str:
+    color_list = {
+        "red": 91,
+        "green": 92,
+        "yellow": 93,
+        "blue": 94,
+        "purple": 95,
+        "cyan": 96,
+        "white": 97
+    }
+    return f"\033[{color_list[color_name]}m{txt}\033[97m"
 
 def show_banner() -> None:
-    banner = """\033[93m
+    if not args.silent:
+        banner = """\033[93m
   ____ ___      __                     
  / / /|_  |____/ /__ ___ ____  ___ ____
 /_  _/ __// __/ / -_) _ `/ _ \/ -_) __/
@@ -44,36 +43,28 @@ def show_banner() -> None:
 
 >> If you liked this tool, give it a \033[93m'★ Star'\033[97m at the repository. Thanks!
 >> \033[34mhttps://github.com/WildZarek/42cleaner\033[97m
+>>
+>> Run the script with -h or --help for more information.
 """
-    os.system("clear")
-    print(banner)
+        os.system("clear")
+        print(banner)
 
-def check_command(command: str) -> str:
-    cmd = subprocess.run(['which', command], stdout=subprocess.PIPE)
-    return cmd.stdout.decode('utf-8').strip()
+def set_args():
+    parser = argparse.ArgumentParser(description="Cleaner script for 42 students.")
+    parser.add_argument("-s", "--silent", action="store_true", help="run the script in silent mode without prompts")
+    return parser.parse_args()
 
-def exec_command(command: str) -> str:
-    cmd = subprocess.run([command], stdout=subprocess.PIPE)
+def exec_command(command: list) -> str:
+    cmd = subprocess.run(command, stdout=subprocess.PIPE)
     return cmd.stdout.decode('utf-8').strip()
 
 def show_space(usr: str) -> str:
-    home = psutil.disk_usage(f"/home/{usr}/")
-    used_space = round(home.percent)
+    home_space = psutil.disk_usage(f"/home/{usr}/")
+    used_space = round(home_space.percent)
     free_space = 100 - used_space
-    msg_space = f"{Red(str(used_space))}{Red('% used')} | {Green(str(free_space))}{Green('% free')}"
-    return msg_space
+    return f"{set_color(f'{used_space}% used', 'red')} | {set_color(f'{free_space}% free', 'green')}"
 
-def need_space(usr: str) -> bool:
-    home = psutil.disk_usage(f"/home/{usr}/")
-    # Uncomment the following lines to print disk usage or use 'df -h' command on a terminal:
-    # print(f"Total: {round(home.total / (2**30), 2)} GiB")
-    # print(f"Used: {round(home.used / (2**30), 2)} GiB")
-    # print(f"Free: {round(home.free / (2**30), 2)} GiB")
-    # print(f"Percentage: {round(home.percent)}%")
-    if round(home.percent) > 60:
-        return True
-    else:
-        return False
+# WORKING HERE
 
 def clear_snap(usr: str) -> int:
     files_deleted = 0
@@ -151,5 +142,6 @@ def clean() -> None:
         return
 
 if __name__ == "__main__":
+    args = set_args()
     show_banner()
     clean()

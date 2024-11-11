@@ -2,7 +2,7 @@
 
 42cleaner is a Python script designed to clean temp/cache files and unnecessary older versions from Snap.
 
-It helps to free up disk space and maintain system performance.
+It helps to free up disk space and maintain system performance and it can be scheduled for automatic background execution.
 
 Made for 42 students. Tested on **42 Málaga** school running **Linux/Ubuntu**. NOT for macOS.
 
