@@ -34,7 +34,7 @@ def show_banner() -> None:
  / / /|_  |____/ /__ ___ ____  ___ ____
 /_  _/ __// __/ / -_) _ `/ _ \/ -_) __/
  /_//____/\__/_/\__/\_,_/_//_/\__/_/   
-\033[91m                       by WildZarek  
+\033[91m v1.0 alpha            by WildZarek
 
 \033[94m42cleaner\033[96m | Cleaner script for 42 students.\033[97m
 
@@ -178,7 +178,7 @@ def schedule_task() -> None:
 
         full_cron_line = f"{interval} {cron_line}"
         os.system(f"(crontab -l; echo '{full_cron_line}') | crontab -")
-        print(f"\n{set_color('Success', 'green')}: Scheduled task created to run every {set_color(interval_number, 'yellow')} hours.")
+        print(f"\n{set_color('Success', 'green')}: Scheduled task created to run every {set_color(interval_number, 'yellow')} hours.\n")
     elif choice == '2':
         current_cron = exec_command(["crontab", "-l"])
         if cron_line not in current_cron:
