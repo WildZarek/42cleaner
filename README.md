@@ -27,10 +27,11 @@ This tool removes the following files:
 - All temp files created by Francinette. (~/francinette/temp)
 - Older versions (revisions) from installed Snap packages.
 
-# Scheduled tasks and silent mode:
+# Scheduled tasks and modes:
 
 - The script allows you to select from different time intervals so that the task runs automatically in the background.
 - Silent Mode: this mode is added to run the scheduled task or execute the task directly without prompts.
+- Verbose Mode: this mode is intended to run the script without the flag --silent and for printing additional information.
 
 # How to use
 
@@ -41,7 +42,8 @@ Cleaner script for 42 students.
 
 options:
   -h, --help    show this help message and exit
-  -s, --silent  run the script in silent mode without prompts
+  -s, --silent  runs the script in silent mode without any prompts
+  -v, --verbose runs the script in verbose mode with additional prompts
 ```
 
 Clone this repository by using the following command:
