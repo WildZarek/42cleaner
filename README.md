@@ -2,7 +2,9 @@
 
 42cleaner is a Python script designed to clean temp/cache files and unnecessary older versions from Snap.
 
-It helps to free up disk space and maintain system performance and it can be scheduled for automatic background execution.
+It helps to free up disk space and maintain system performance.
+
+It can be scheduled for automatic background execution (using cron).
 
 Made for 42 students. Tested on **42 Málaga** school running **Linux/Ubuntu**. NOT for macOS.
 
@@ -29,8 +31,9 @@ This tool removes the following files:
 
 # Scheduled tasks and modes:
 
-- The script allows you to select from different time intervals so that the task runs automatically in the background.
-- **Silent Mode**: This mode is intended to run the scheduled task or execute the task directly without prompts.
+The script allows you to choose from different time intervals so that the task runs automatically in the background.
+
+- **Silent Mode**: This mode is intended to run the script in the background, without any prompts.
 - **Verbose Mode**: This mode is intended to run the script without the flag --silent and for printing additional information.
 
 # How to use
