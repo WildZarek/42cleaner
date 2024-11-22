@@ -101,7 +101,7 @@ def check_update() -> None:
         download_and_replace(download_url, os.path.dirname(SCRIPT_PATH))
         return
     elif latest_version == CURRENT_VERSION:
-        if not args.silent:
+        if not args.silent and args.verbose:
             print(f"\n[{set_color('OK', 'green')}] You are already using the latest version.")
     else:
         if not args.silent and args.verbose:
