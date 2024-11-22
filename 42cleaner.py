@@ -11,9 +11,15 @@ import argparse
 import os
 import psutil
 import re
+import requests
+import shutil
 import subprocess
 from glob import glob
 from time import sleep
+
+SCRIPT_PATH = os.path.abspath(__file__)
+REPO_PATH = "WildZarek/42cleaner"
+CURRENT_VERSION = "v1.1-alpha"
 
 def set_color(txt: str, color_name: str) -> str:
     color_list = {
@@ -29,12 +35,12 @@ def set_color(txt: str, color_name: str) -> str:
 
 def show_banner() -> None:
     if not args.silent:
-        banner = """\033[93m
+        banner = f"""\033[93m
   ____ ___      __                     
  / / /|_  |____/ /__ ___ ____  ___ ____
 /_  _/ __// __/ / -_) _ `/ _ \/ -_) __/
  /_//____/\__/_/\__/\_,_/_//_/\__/_/   
-\033[91m v1.0.2 alpha          by WildZarek
+\033[91m {CURRENT_VERSION}            by WildZarek
 
 \033[94m42cleaner\033[96m | Cleaner script for 42 students.\033[97m
 
@@ -47,14 +53,47 @@ def show_banner() -> None:
         os.system("clear")
         print(banner)
 
+def get_latest_version(repo_url: str) -> tuple:
+    api_url = f"https://api.github.com/repos/{repo_url}/releases/latest"
+    response = requests.get(api_url)
+    response.raise_for_status()
+    latest_release = response.json()
+    return latest_release['tag_name'], latest_release['zipball_url']
+
+def download_and_replace(url: str, dest: str) -> None:
+    response = requests.get(url, stream=True)
+    response.raise_for_status()
+    zip_path = os.path.join(dest, 'latest_version.zip')
+    with open(zip_path, 'wb') as file:
+        shutil.copyfileobj(response.raw, file)
+    shutil.unpack_archive(zip_path, dest)
+    os.remove(zip_path)
+    print("Update completed. Please restart the script.")
+
+def check_update() -> None:
+    latest_version, download_url = get_latest_version(REPO_PATH)
+    if latest_version > CURRENT_VERSION:
+        new_version = set_color(f'{latest_version}', 'green')
+        print(f"[{set_color('!', 'green')}] New version available: {new_version}. Updating...")
+        download_and_replace(download_url, os.path.dirname(SCRIPT_PATH))
+        return
+    elif latest_version == CURRENT_VERSION:
+        if not args.silent:
+            print(f"[{set_color('OK', 'green')}] You are already using the latest version).\n")
+    else:
+        if not args.silent and args.verbose:
+            new_version = set_color(f'{CURRENT_VERSION}', 'green')
+            print(f"\n[{set_color('^', 'cyan')}] You are using a newer version ({new_version}).")
+
 def show_menu():
     print("Please choose an option:\n")
     print(f"1.{set_color(' Create an scheduled task', 'yellow')}")
     print(f"2.{set_color(' Remove an scheduled task', 'yellow')}")
     print(f"3.{set_color(' Run the script now', 'yellow')}")
+    print(f"4.{set_color(' Check for updates', 'yellow')}")
     print(f"q.{set_color(' Quit', 'yellow')}")
 
-    choice = input("\nEnter your choice (1/2/3/q): ").strip().lower()
+    choice = input("\nEnter your choice (1/2/3/4/q): ").strip().lower()
 
     return choice
 
@@ -74,6 +113,9 @@ def show_space(usr: str) -> str:
     return f"{set_color(f'{used_space}% used', 'red')} | {set_color(f'{free_space}% free', 'green')}"
 
 def clean() -> None:
+
+    check_update()
+
     usr = exec_command(["whoami"])
 
     # Check if cleanup is necessary
@@ -142,14 +184,13 @@ def clean() -> None:
                 print(f"[{set_color('-', 'red')}] Deleted {set_color(str(total_deleted_files_count), 'yellow')} files.")
         print(f"[{set_color('i', 'blue')}] Disk usage after clean: {show_space(usr)}")
 
-def schedule_task() -> None:
+def main_menu() -> None:
     if args.silent:
         return  # Skip task scheduling in silent mode
 
     choice = show_menu()
 
-    script_path = os.path.abspath(__file__)
-    cron_line = f"{script_path} --silent &> /dev/null"
+    cron_line = f"{SCRIPT_PATH} --silent &> /dev/null"
 
     if choice == '1':
         current_cron = exec_command(["crontab", "-l"])
@@ -164,6 +205,7 @@ def schedule_task() -> None:
             '4': "0 */8 * * *",
             '5': "0 */12 * * *"
         }
+
         print("\nChoose an interval for the scheduled task:\n")
         print(f"1.{set_color(' Every hour', 'blue')}")
         print(f"2.{set_color(' Every 3 hours', 'blue')}")
@@ -193,10 +235,24 @@ def schedule_task() -> None:
             print(f"\n{set_color('Success', 'green')}: Scheduled task removed.")
     elif choice == '3':
         clean()
+    elif choice == '4':
+        latest_version, download_url = get_latest_version(REPO_PATH)
+        if latest_version > CURRENT_VERSION:
+            new_version = set_color(f'{latest_version}', 'green')
+            print(f"[{set_color('!', 'green')}] New version available: {new_version}. Updating...")
+            download_and_replace(download_url, os.path.dirname(SCRIPT_PATH))
+            return
+        elif latest_version == CURRENT_VERSION:
+            if not args.silent:
+                print(f"[{set_color('OK', 'green')}] You are already using the latest version).\n")
+        else:
+            if not args.silent:
+                new_version = set_color(f'{CURRENT_VERSION}', 'green')
+                print(f"\n[{set_color('^', 'cyan')}] You are using a newer version ({new_version}).\n")
     elif choice == 'q':
         print(f"\n{set_color('Bye. Have a nice day!', 'green')}")
 
 if __name__ == "__main__":
     args = set_args()
     show_banner()
-    schedule_task()
+    main_menu()
