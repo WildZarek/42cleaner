@@ -14,6 +14,8 @@ import re
 import requests
 import shutil
 import subprocess
+import tempfile
+import zipfile
 from glob import glob
 from time import sleep
 
@@ -66,20 +68,40 @@ def download_and_replace(url: str, dest: str) -> None:
     zip_path = os.path.join(dest, 'latest_version.zip')
     with open(zip_path, 'wb') as file:
         shutil.copyfileobj(response.raw, file)
-    shutil.unpack_archive(zip_path, dest)
+    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            zip_ref.extractall(temp_dir)
+            
+            # Identify the main directory inside the zip file
+            main_dir = None
+            for item in zip_ref.namelist():
+                if item.endswith('/'):
+                    main_dir = item
+                    break
+            
+            if main_dir:
+                main_dir_path = os.path.join(temp_dir, main_dir)
+                # Move the contents of the main_dir to the destination directory
+                for item in os.listdir(main_dir_path):
+                    s = os.path.join(main_dir_path, item)
+                    d = os.path.join(dest, item)
+                    if os.path.isdir(s):
+                        shutil.copytree(s, d, dirs_exist_ok=True)
+                    else:
+                        shutil.copy2(s, d)
     os.remove(zip_path)
-    print(f"[{set_color('>', 'green')}] Update completed. Please restart the script.")
+    print(f"[{set_color('>', 'green')}] Update completed. Please run the script again.")
 
 def check_update() -> None:
     latest_version, download_url = get_latest_version(REPO_PATH)
     if latest_version > CURRENT_VERSION:
         new_version = set_color(f'{latest_version}', 'green')
-        print(f"[{set_color('!', 'green')}] New version available: {new_version}. Updating...")
+        print(f"\n[{set_color('!', 'green')}] New version available: {new_version}. Updating...")
         download_and_replace(download_url, os.path.dirname(SCRIPT_PATH))
         return
     elif latest_version == CURRENT_VERSION:
-        if not args.silent and args.verbose:
-            print(f"\n[{set_color('OK', 'green')}] You are already using the latest version.")
+        if not args.silent:
+            print(f"\n[{set_color('OK', 'green')}] You are already using the latest version).\n")
     else:
         if not args.silent and args.verbose:
             new_version = set_color(f'{CURRENT_VERSION}', 'green')
@@ -122,7 +144,7 @@ def clean() -> None:
     if psutil.disk_usage(f"/home/{usr}/").percent <= 60:
         if not args.silent:
             print(f"\n[{set_color('!', 'yellow')}] Nothing to clean. Space: {show_space(usr)}")
-            print(f"\n[{set_color('<', 'red')}] Exiting...\n")
+            print(f"\n[{set_color('<', 'red')}] Exiting...")
         return
 
     # Check for 'rm' binary
@@ -239,18 +261,18 @@ def main_menu() -> None:
         latest_version, download_url = get_latest_version(REPO_PATH)
         if latest_version > CURRENT_VERSION:
             new_version = set_color(f'{latest_version}', 'green')
-            print(f"\n[{set_color('!', 'green')}] New version available: {new_version}. Updating...")
+            print(f"[{set_color('!', 'green')}] New version available: {new_version}. Updating...")
             download_and_replace(download_url, os.path.dirname(SCRIPT_PATH))
             return
         elif latest_version == CURRENT_VERSION:
             if not args.silent:
-                print(f"\n[{set_color('OK', 'green')}] You are already using the latest version.\n")
+                print(f"[{set_color('OK', 'green')}] You are already using the latest version).\n")
         else:
             if not args.silent:
                 new_version = set_color(f'{CURRENT_VERSION}', 'green')
-                print(f"[{set_color('^', 'cyan')}] You are using a newer version ({new_version}).\n")
+                print(f"\n[{set_color('^', 'cyan')}] You are using a newer version ({new_version}).\n")
     elif choice == 'q':
-        print(f"\n{set_color('Bye. Have a nice day!', 'green')}\n")
+        print(f"\n{set_color('Bye. Have a nice day!', 'green')}")
 
 if __name__ == "__main__":
     args = set_args()
