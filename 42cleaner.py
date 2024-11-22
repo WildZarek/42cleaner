@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-# Cleaner script for 42 students. It will remove all the trash files from our home directory.
+# Cleaner script for 42 students. 
+# It will remove all the trash files from our home directory.
 # --------------------
 # Author: WildZarek
 # 42login: dsarmien
