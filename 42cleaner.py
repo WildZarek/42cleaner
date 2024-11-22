@@ -122,7 +122,7 @@ def clean() -> None:
     if psutil.disk_usage(f"/home/{usr}/").percent <= 60:
         if not args.silent:
             print(f"\n[{set_color('!', 'yellow')}] Nothing to clean. Space: {show_space(usr)}")
-            print(f"\n[{set_color('<', 'red')}] Exiting...")
+            print(f"\n[{set_color('<', 'red')}] Exiting...\n")
         return
 
     # Check for 'rm' binary
