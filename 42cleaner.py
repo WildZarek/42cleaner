@@ -266,7 +266,7 @@ def main_menu() -> None:
             return
         elif latest_version == CURRENT_VERSION:
             if not args.silent:
-                print(f"[{set_color('OK', 'green')}] You are already using the latest version.\n")
+                print(f"\n[{set_color('OK', 'green')}] You are already using the latest version.\n")
         else:
             if not args.silent:
                 new_version = set_color(f'{CURRENT_VERSION}', 'green')
