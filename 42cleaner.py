@@ -34,7 +34,7 @@ def show_banner() -> None:
  / / /|_  |____/ /__ ___ ____  ___ ____
 /_  _/ __// __/ / -_) _ `/ _ \/ -_) __/
  /_//____/\__/_/\__/\_,_/_//_/\__/_/   
-\033[91m v1.0 alpha            by WildZarek
+\033[91m v1.0.2 alpha          by WildZarek
 
 \033[94m42cleaner\033[96m | Cleaner script for 42 students.\033[97m
 
@@ -158,14 +158,18 @@ def schedule_task() -> None:
             return
 
         interval_options = {
-            '1': "*/6 * * * *",
-            '2': "*/8 * * * *",
-            '3': "*/12 * * * *"
+            '1': "0 * * * *",
+            '2': "0 */3 * * *",
+            '3': "0 */6 * * *",
+            '4': "0 */8 * * *",
+            '5': "0 */12 * * *"
         }
         print("\nChoose an interval for the scheduled task:\n")
-        print(f"1.{set_color(' Every 6 hours', 'blue')}")
-        print(f"2.{set_color(' Every 8 hours', 'blue')}")
-        print(f"3.{set_color(' Every 12 hours', 'blue')}")
+        print(f"1.{set_color(' Every hour', 'blue')}")
+        print(f"2.{set_color(' Every 3 hours', 'blue')}")
+        print(f"3.{set_color(' Every 6 hours', 'blue')}")
+        print(f"4.{set_color(' Every 8 hours', 'blue')}")
+        print(f"5.{set_color(' Every 12 hours', 'blue')}")
 
         interval_choice = input("\nEnter your choice (1/2/3): ").strip()
         interval = interval_options.get(interval_choice)
