@@ -207,6 +207,15 @@ def clean() -> None:
                 print(f"[{set_color('-', 'red')}] Deleted {set_color(str(total_deleted_files_count), 'yellow')} files.")
         print(f"[{set_color('i', 'blue')}] Disk usage after clean: {show_space(usr)}")
 
+def get_interval(cron_expression):
+    regex = r"0 \*/(\d+) \* \* \*"
+    match = re.match(regex, cron_expression)
+
+    if match:
+        return int(match.group(1))
+    else:
+        return 0
+
 def main_menu() -> None:
     if args.silent:
         return  # Skip task scheduling in silent mode
@@ -236,18 +245,21 @@ def main_menu() -> None:
         print(f"4.{set_color(' Every 8 hours', 'blue')}")
         print(f"5.{set_color(' Every 12 hours', 'blue')}")
 
-        interval_choice = input("\nEnter your choice (1/2/3): ").strip()
+        interval_choice = input("\nEnter your choice (1/2/3/4/5): ").strip()
         interval = interval_options.get(interval_choice)
         if not interval:
             print(f"\n{set_color('Error', 'red')}: Invalid choice.")
             return
-
+        
         # Extract the number from the interval string
-        interval_number = re.search(r'\d+', interval).group()
+        interval_number = get_interval(interval)
 
         full_cron_line = f"{interval} {cron_line}"
         os.system(f"(crontab -l; echo '{full_cron_line}') | crontab -")
-        print(f"\n{set_color('Success', 'green')}: Scheduled task created to run every {set_color(interval_number, 'yellow')} hours.\n")
+        if int(interval_number) == 0:
+            print(f"\n{set_color('Success', 'green')}: Scheduled task created to run every {set_color('hour', 'yellow')}.\n")
+        else:
+            print(f"\n{set_color('Success', 'green')}: Scheduled task created to run every {set_color(interval_number, 'yellow')} hours.\n")
     elif choice == '2':
         current_cron = exec_command(["crontab", "-l"])
         if cron_line not in current_cron:
