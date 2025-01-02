@@ -72,6 +72,12 @@ python3 42cleaner.py
 >
 > Otherwise, the tool performs the needed operations to free space.
 
+> [!WARNING]
+> The cron task (if configured) will not synchronize on other computers on campus,
+> this is due to 42's own configuration, so it is not a problem with the script.
+>
+> Therefore, it's necessary to configure the cron task every time you want to use this functionality.
+
 # Acknowledgments
 
 Thanks to [@4ndymcfly](https://github.com/4ndymcfly) for his contributions.
