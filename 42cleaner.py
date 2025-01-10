@@ -247,8 +247,14 @@ def clean() -> None:
     else:
         if not args.silent:
             print(f"[{set_color('!', 'yellow')}] Cleaning trash files...")
-        for path in trash_paths:
-            os.system(f"{rm_bin} -rf {path}")
+        for index, path in enumerate(trash_paths):
+            try:
+                if index == 0:
+                    subprocess.run(f"rm -rf {path}", shell=True, stderr=subprocess.DEVNULL)
+                else:
+                    os.system(f"{rm_bin} -rf {path}")
+            except Exception as e:
+                pass
         if not args.silent:
             sleep(2)
             if args.verbose:
