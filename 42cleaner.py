@@ -22,7 +22,7 @@ from time import sleep
 
 SCRIPT_PATH = os.path.abspath(__file__)
 REPO_PATH = "WildZarek/42cleaner"
-CURRENT_VERSION = "v1.1-alpha"
+CURRENT_VERSION = "v1.2-alpha"
 CLEANUP_TRIGGER = 60
 
 before_used_space = None
@@ -111,15 +111,50 @@ def check_update() -> None:
             new_version = set_color(f'{CURRENT_VERSION}', 'green')
             print(f"\n[{set_color('^', 'cyan')}] You are using a newer version ({new_version}).")
 
+# WORKING HERE - Detect shell and edit config
+def detect_shell_and_edit_config() -> None:
+    shell = os.environ.get('SHELL')
+    script_path = os.path.abspath(__file__)
+    if shell:
+        if shell.endswith('bash'):
+            config_file = os.path.expanduser('~/.bashrc')
+            
+        elif shell.endswith('zsh'):
+            config_file = os.path.expanduser('~/.zshrc')
+        else:
+            if args.verbose:
+                print(f"[{set_color('!', 'yellow')}] Sin soporte para {set_color('{shell}', 'cyan')} :(")
+            return
+        if os.path.exists(config_file):
+            with open(config_file, 'r') as file:
+                content = file.read()
+            alias_pattern = re.compile(r'^alias 42cl=', re.MULTILINE)
+            if not alias_pattern.search(content):
+                with open(config_file, 'a') as file:
+                    file.write("\n# Configuración añadida por 42cleaner\n")
+                    file.write(f"alias 42cl='python3 {script_path}'\n")
+                if args.verbose:
+                    print(f"[{set_color('×', 'red')}] El alias {set_color('42cl', 'cyan')} se agregó correctamente.")
+                print(f"[{set_color('i', 'blue')}] Por favor, reinicia la terminal para aplicar los cambios.")
+            else:
+                if args.verbose:
+                    print(f"[{set_color('×', 'red')}] El alias {set_color('42cl', 'cyan')} ya existe.")
+        else:
+            print(f"[{set_color('×', 'red')}] El archivo de configuración {set_color(config_file, 'cyan')} no existe.")
+    else:
+        if args.verbose:
+            print(f"[{set_color('×', 'red')}] No se pudo detectar la shell activa")
+
 def show_menu():
     print("Please choose an option:\n")
-    print(f"1.{set_color(' Create an scheduled task', 'yellow')}")
-    print(f"2.{set_color(' Remove an scheduled task', 'yellow')}")
-    print(f"3.{set_color(' Run the script now', 'yellow')}")
-    print(f"4.{set_color(' Check for updates', 'yellow')}")
-    print(f"q.{set_color(' Quit', 'yellow')}")
+    print(f"1.{set_color(' Create an alias for the shell', 'yellow')}")
+    print(f"2.{set_color(' Create an scheduled task', 'yellow')}")
+    print(f"3.{set_color(' Remove an scheduled task', 'yellow')}")
+    print(f"4.{set_color(' Run the script now', 'yellow')}")
+    print(f"5.{set_color(' Check for updates', 'yellow')}")
+    print(f"6.{set_color(' Quit', 'yellow')}")
 
-    choice = input("\nEnter your choice (1/2/3/4/q): ").strip().lower()
+    choice = input("\nEnter your choice (1/2/3/4/5/6/q): ").strip().lower()
 
     return choice
 
@@ -240,6 +275,8 @@ def main_menu() -> None:
     cron_line = f"{SCRIPT_PATH} --silent &> /dev/null"
 
     if choice == '1':
+        detect_shell_and_edit_config()
+    elif choice == '2':
         current_cron = exec_command(["crontab", "-l"])
         if cron_line in current_cron:
             print(f"\n{set_color('Info', 'blue')}: A scheduled task already exists for this script.")
@@ -275,7 +312,7 @@ def main_menu() -> None:
             print(f"\n{set_color('Success', 'green')}: Scheduled task created to run every {set_color('hour', 'yellow')}.\n")
         else:
             print(f"\n{set_color('Success', 'green')}: Scheduled task created to run every {set_color(interval_number, 'yellow')} hours.\n")
-    elif choice == '2':
+    elif choice == '3':
         current_cron = exec_command(["crontab", "-l"])
         if cron_line not in current_cron:
             print(f"\n{set_color('Info', 'blue')}: No scheduled task found for this script.")
@@ -283,9 +320,9 @@ def main_menu() -> None:
             new_cron = "\n".join([line for line in current_cron.splitlines() if cron_line not in line])
             os.system(f"echo '{new_cron}' | crontab -")
             print(f"\n{set_color('Success', 'green')}: Scheduled task removed.")
-    elif choice == '3':
-        clean()
     elif choice == '4':
+        clean()
+    elif choice == '5':
         latest_version, download_url = get_latest_version(REPO_PATH)
         if latest_version > CURRENT_VERSION:
             new_version = set_color(f'{latest_version}', 'green')
@@ -299,7 +336,7 @@ def main_menu() -> None:
             if not args.silent:
                 new_version = set_color(f'{CURRENT_VERSION}', 'green')
                 print(f"\n[{set_color('^', 'cyan')}] You are using a newer version ({new_version}).\n")
-    elif choice == 'q':
+    elif choice == '6' or choice == 'q':
         print(f"\n{set_color('Bye. Have a nice day!', 'green')}\n")
 
 if __name__ == "__main__":
