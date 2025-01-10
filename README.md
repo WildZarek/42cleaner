@@ -81,8 +81,7 @@ python3 42cleaner.py
 ```
 
 > [!TIP]
-> If the alias was configured previously, just run it as follows:
-> $> 42cl
+> If the alias was configured previously, just run it writting '42cl' in the terminal.
 
 > [!IMPORTANT]
 > If the used space in your 'home' is under 60%, the tool doesn't do any operation.
