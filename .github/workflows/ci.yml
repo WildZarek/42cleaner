@@ -1,4 +1,4 @@
-name: Create release
+name: Create New Release
 
 on:
   push:
@@ -18,12 +18,48 @@ jobs:
     name: Release pushed tag
     runs-on: ubuntu-22.04
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Git commiter
+        run:
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+
+      - name: Get latest tag
+        id: get_latest_tag
+        run:
+            latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
+            echo "::set-output name=latest_tag::$latest_tag"
+
+      - name: Increment version
+        id: increment_version
+        run:
+            latest_tag=${{ steps.get_latest_tag.outputs.latest_tag }}
+            if [[ $latest_tag =~ ^v([0-9]+)\.([0-9]+)-alpha$ ]]; then
+              major=${BASH_REMATCH[1]}
+              minor=${BASH_REMATCH[2]}
+              new_tag="v$major.$((minor+1))-alpha"
+              echo "::set-output name=new_tag::$new_tag"
+            else
+              echo "Latest tag does not match expected pattern"
+              exit 1
+            fi
+
+      - name: Create and push new tag
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run:
+            new_tag=${{ steps.increment_version.outputs.new_tag }}
+            git tag "$new_tag"
+            git push origin "$new_tag"
+
       - name: Create release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ github.ref_name }}
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run:
-          gh release create "$tag" \
-              --repo="$GITHUB_REPOSITORY" \
-              --title="${GITHUB_REPOSITORY#*/} ${tag#v}" \
-              --generate-notes
+            new_tag=${{ steps.increment_version.outputs.new_tag }}
+            gh release create "$new_tag" \
+                --repo="$GITHUB_REPOSITORY" \
+                --title="${GITHUB_REPOSITORY#*/} ${new_tag#v}" \
+                --generate-notes
