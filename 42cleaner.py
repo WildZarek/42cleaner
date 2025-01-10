@@ -24,6 +24,8 @@ SCRIPT_PATH = os.path.abspath(__file__)
 REPO_PATH = "WildZarek/42cleaner"
 CURRENT_VERSION = "v1.1-alpha"
 
+before_used_space = None
+
 def set_color(txt: str, color_name: str) -> str:
     color_list = {
         "red": 91,
@@ -131,11 +133,19 @@ def exec_command(command: list) -> str:
     return cmd.stdout.decode('utf-8').strip()
 
 def show_space(usr: str) -> str:
-    used_space = round(psutil.disk_usage(f"/home/{usr}/").percent)
-    free_space = 100 - used_space
-    return f"{set_color(f'{used_space}% used', 'red')} | {set_color(f'{free_space}% free', 'green')}"
+    global before_used_space
+    current_used_space = round(psutil.disk_usage(f"/home/{usr}/").percent)
+    current_free_space = 100 - current_used_space
+    if before_used_space is not None:
+        cleaned_space = before_used_space - current_used_space
+        cleaned_space_str = f" | {set_color(f'{cleaned_space}% cleaned', 'blue')}"
+    else:
+        cleaned_space_str = ""
+    before_used_space = current_used_space
+    return f"{set_color(f'{current_used_space}% used', 'red')} | {set_color(f'{current_free_space}% free', 'green')}{cleaned_space_str}"
 
 def clean() -> None:
+    global before_used_space
 
     check_update()
 
@@ -154,6 +164,8 @@ def clean() -> None:
         if not args.silent:
             print(f"{set_color('Error', 'red')}: {set_color('rm binary not found.', 'cyan')}")
         return
+
+    before_used_space = round(psutil.disk_usage(f"/home/{usr}/").percent)
 
     # Paths for trash files
     trash_paths = [
