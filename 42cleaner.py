@@ -111,19 +111,17 @@ def check_update() -> None:
             new_version = set_color(f'{CURRENT_VERSION}', 'green')
             print(f"\n[{set_color('^', 'cyan')}] You are using a newer version ({new_version}).")
 
-# WORKING HERE - Detect shell and edit config
 def detect_shell_and_edit_config() -> None:
     shell = os.environ.get('SHELL')
     script_path = os.path.abspath(__file__)
     if shell:
         if shell.endswith('bash'):
             config_file = os.path.expanduser('~/.bashrc')
-            
         elif shell.endswith('zsh'):
             config_file = os.path.expanduser('~/.zshrc')
         else:
             if args.verbose:
-                print(f"[{set_color('!', 'yellow')}] Sin soporte para {set_color('{shell}', 'cyan')} :(")
+                print(f"[{set_color('!', 'yellow')}] Not support for {set_color('{shell}', 'cyan')} shell. Sorry :(")
             return
         if os.path.exists(config_file):
             with open(config_file, 'r') as file:
@@ -131,19 +129,19 @@ def detect_shell_and_edit_config() -> None:
             alias_pattern = re.compile(r'^alias 42cl=', re.MULTILINE)
             if not alias_pattern.search(content):
                 with open(config_file, 'a') as file:
-                    file.write("\n# Configuración añadida por 42cleaner\n")
+                    file.write("\n# Alias added by 42cleaner\n")
                     file.write(f"alias 42cl='python3 {script_path}'\n")
                 if args.verbose:
-                    print(f"[{set_color('×', 'red')}] El alias {set_color('42cl', 'cyan')} se agregó correctamente.")
-                print(f"[{set_color('i', 'blue')}] Por favor, reinicia la terminal para aplicar los cambios.")
+                    print(f"[{set_color('OK', 'green')}] Alias {set_color('42cl', 'cyan')} added successfully.")
+                print(f"[{set_color('i', 'blue')}] Please, reset your terminal to apply the changes.")
             else:
                 if args.verbose:
-                    print(f"[{set_color('×', 'red')}] El alias {set_color('42cl', 'cyan')} ya existe.")
+                    print(f"[{set_color('Error', 'red')}] Alias {set_color('42cl', 'cyan')} already exists. Skipping...")
         else:
-            print(f"[{set_color('×', 'red')}] El archivo de configuración {set_color(config_file, 'cyan')} no existe.")
+            print(f"[{set_color('Error', 'red')}] Config file {set_color(config_file, 'cyan')} does not exists.")
     else:
         if args.verbose:
-            print(f"[{set_color('×', 'red')}] No se pudo detectar la shell activa")
+            print(f"[{set_color('Error', 'red')}] Shell not found. Please, run the script in a terminal.")
 
 def show_menu():
     print("Please choose an option:\n")
