@@ -23,6 +23,7 @@ from time import sleep
 SCRIPT_PATH = os.path.abspath(__file__)
 REPO_PATH = "WildZarek/42cleaner"
 CURRENT_VERSION = "v1.1-alpha"
+CLEANUP_TRIGGER = 60
 
 before_used_space = None
 
@@ -152,10 +153,12 @@ def clean() -> None:
     usr = exec_command(["whoami"])
 
     # Check if cleanup is necessary
-    if psutil.disk_usage(f"/home/{usr}/").percent <= 60:
+    if psutil.disk_usage(f"/home/{usr}/").percent <= CLEANUP_TRIGGER:
         if not args.silent:
             print(f"\n[{set_color('!', 'yellow')}] Nothing to clean. Space: {show_space(usr)}")
             print(f"\n[{set_color('<', 'red')}] Exiting...\n")
+        if args.verbose and psutil.disk_usage(f"/home/{usr}/").percent < 60:
+            print(f"[{set_color('!', 'yellow')}] You are using an unusual cleaner trigger: {CLEANUP_TRIGGER}% (default: 60%).")
         return
 
     # Check for 'rm' binary
