@@ -37,8 +37,9 @@ This will make extremely easy to remember the shell command to run it next time.
 
 - **Verbose Mode**: Some prompts are only visible if this flag are used.
 
-> [!NOTE]
+> [!WARNING]
 > If you do not see any prompt, maybe an error has occurs (like config file does not exist or alias already existing in file)
+>
 > Is not an error, just use the flag --verbose to avoid this behavior.
 
 # Scheduled tasks and modes
@@ -83,7 +84,7 @@ python3 42cleaner.py
 > If the alias was configured previously, just run it as follows:
 > $> 42cl
 
-> [!NOTE]
+> [!IMPORTANT]
 > If the used space in your 'home' is under 60%, the tool doesn't do any operation.
 >
 > Otherwise, the tool performs the needed operations to free space.
